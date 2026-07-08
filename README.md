@@ -1,202 +1,202 @@
 # Personal Wealth & Security Vault (PWSV)
 
-Це навчальний проєкт - локальна інформаційна система для обліку особистих фінансів. Реалізовано перший етап ("Transactional Core") - ядро системи з базою даних, серверним API та десктопним клієнтом. Все працює локально на одному ПК, без жодних звернень до інтернету. Основний фокус - чистота моделі даних (3NF), цілісність на рівні СУБД (constraints, тригери), і базова безпека (хешування паролів, шифрування чутливих полів).
+This is an educational project - a local information system for personal finance tracking. The first stage ("Transactional Core") has been implemented - the system core with a database, a server API, and a desktop client. Everything runs locally on a single PC, without any access to the internet. The main focus is on the cleanliness of the data model (3NF), integrity at the DBMS level (constraints, triggers), and basic security (password hashing, encryption of sensitive fields).
 
-## Що вміє система
+## What the system can do
 
-Облік фінансів:
+Finance tracking:
 
-- Створення і ведення кількох рахунків (готівка, банківські картки, криптогаманці, інше)
-- Підтримка різних валют: UAH, USD, EUR, PLN, GBP, BTC, ETH, USDT (з можливістю додавання своїх)
-- Внесення курсів валют вручну з прив'язкою до дати
-- Ієрархічний довідник категорій доходів і витрат (необмежена вкладеність)
-- Транзакції трьох типів: дохід (Income), витрата (Expense), переказ між рахунками (Transfer, у тому числі між валютами)
-- Автоматичне оновлення балансу рахунку через тригери СУБД при будь-яких змінах транзакцій
-- Захист від видалення рахунку, по якому існують транзакції (тригер `INSTEAD OF DELETE`)
-- Фільтрація і пагінація транзакцій за датою, рахунком, категорією, типом
-- Деталі рахунку з історією останніх 50 транзакцій
-- Початковий залишок при створенні рахунку оформлюється окремою службовою транзакцією (категорія "Початковий залишок")
-- Аудит-журнал (AuditEntries) автоматично фіксує INSERT/UPDATE/DELETE для основних сутностей
+- Creating and maintaining multiple accounts (cash, bank cards, crypto wallets, other)
+- Support for various currencies: UAH, USD, EUR, PLN, GBP, BTC, ETH, USDT (with the ability to add your own)
+- Entering exchange rates manually with a binding to a date
+- Hierarchical directory of income and expense categories (unlimited nesting)
+- Transactions of three types: income (Income), expense (Expense), transfer between accounts (Transfer, including between currencies)
+- Automatic update of the account balance via DBMS triggers on any changes to transactions
+- Protection against deleting an account that has transactions (`INSTEAD OF DELETE` trigger)
+- Filtering and pagination of transactions by date, account, category, type
+- Account details with a history of the last 50 transactions
+- The initial balance when creating an account is recorded as a separate service transaction (category "Initial balance")
+- The audit log (AuditEntries) automatically records INSERT/UPDATE/DELETE for the main entities
 
-Безпека:
+Security:
 
-- Реєстрація і вхід через логін та пароль (одного користувача на інсталяцію)
-- Хешування паролів алгоритмом BCrypt (work factor = 12)
-- Шифрування номерів рахунків і описів транзакцій (AES-256-GCM)
-- Ключ шифрування виводиться з мастер-паролю користувача через PBKDF2-SHA256 (100 000 ітерацій, унікальна сіль на користувача)
-- JWT-авторизація між клієнтом і API (HS256, термін дії 8 годин)
-- Rate limiting на ендпоінт логіну (3 спроби / хвилину з IP)
-- Серверний журнал з маскуванням чутливих полів (паролі, токени, описи)
-- Кореляційний ID на кожен HTTP-запит
-- Перевірка приналежності ресурсу користувачу на кожній операції
-- Локалізація українською мовою (uk-UA)
+- Registration and login via username and password (one user per installation)
+- Password hashing with the BCrypt algorithm (work factor = 12)
+- Encryption of account numbers and transaction descriptions (AES-256-GCM)
+- The encryption key is derived from the user's master password via PBKDF2-SHA256 (100,000 iterations, a unique salt per user)
+- JWT authorization between the client and the API (HS256, valid for 8 hours)
+- Rate limiting on the login endpoint (3 attempts / minute per IP)
+- A server log with masking of sensitive fields (passwords, tokens, descriptions)
+- A correlation ID on every HTTP request
+- Verification of the resource's ownership by the user on every operation
+- Localization in Ukrainian (uk-UA)
 
-Що є в проєкті:
+What is in the project:
 
-- Серверна частина на ASP.NET Core Web API (.NET 10, C# 14)
-- Клієнтська частина на WPF (MVVM, CommunityToolkit.Mvvm)
-- База даних SQL Server Express LocalDB
-- Entity Framework Core 10 для роботи з БД
-- Тригери на рівні БД для автоматичного перерахунку балансів
-- Чиста архітектура (Domain / Application / Infrastructure / Presentation)
-- CQRS через MediatR з pipeline behaviors (логування, валідація, unit-of-work для транзакційних команд)
-- FluentValidation на боці Application
-- Mapster для маппінгу Entity → DTO
-- Serilog зі структурованим логуванням у файли
-- Swagger / OpenAPI для документації API
-- Юніт-тести (xUnit + FluentAssertions) та інтеграційні тести (WebApplicationFactory + реальний LocalDB)
+- Server side on ASP.NET Core Web API (.NET 10, C# 14)
+- Client side on WPF (MVVM, CommunityToolkit.Mvvm)
+- SQL Server Express LocalDB database
+- Entity Framework Core 10 for working with the DB
+- Database-level triggers for automatic recalculation of balances
+- Clean architecture (Domain / Application / Infrastructure / Presentation)
+- CQRS via MediatR with pipeline behaviors (logging, validation, unit-of-work for transactional commands)
+- FluentValidation on the Application side
+- Mapster for Entity → DTO mapping
+- Serilog with structured logging to files
+- Swagger / OpenAPI for API documentation
+- Unit tests (xUnit + FluentAssertions) and integration tests (WebApplicationFactory + real LocalDB)
 
-## Що потрібно встановити
+## What needs to be installed
 
-- Windows 10 (x64) або новіше
-- Visual Studio 2026 Community з робочими навантаженнями:
+- Windows 10 (x64) or newer
+- Visual Studio 2026 Community with the workloads:
   - ".NET desktop development"
   - "ASP.NET and web development"
-  - "Data storage and processing" (для LocalDB)
-- .NET 10 SDK (входить у поставку VS 2026)
-- SQL Server Express LocalDB (зазвичай встановлюється разом з VS)
+  - "Data storage and processing" (for LocalDB)
+- .NET 10 SDK (included with VS 2026)
+- SQL Server Express LocalDB (usually installed together with VS)
 
-Ніяких додаткових пакетів встановлювати руками не потрібно - усе підтягне NuGet при першому білді.
+There is no need to install any additional packages by hand - NuGet will pull everything in on the first build.
 
-## Як запустити локально
+## How to run locally
 
-### 1. Завантажити репозиторій з GitHub
+### 1. Download the repository from GitHub
 
 ```
 git clone https://github.com/ldksfld/PWSV.git
 cd PWSV
 ```
 
-### 2. Переконатись, що LocalDB живий
+### 2. Make sure LocalDB is alive
 
-У командному рядку:
+At the command line:
 
 ```
 sqllocaldb info
 ```
 
-У списку має бути `MSSQLLocalDB`. Якщо немає - створити та запустити:
+The list should contain `MSSQLLocalDB`. If it is not there - create and start it:
 
 ```
 sqllocaldb create "MSSQLLocalDB"
 sqllocaldb start "MSSQLLocalDB"
 ```
 
-Перевірка статусу:
+Checking the status:
 
 ```
 sqllocaldb info "MSSQLLocalDB"
 ```
 
-У виводі має бути `State: Running`.
+The output should contain `State: Running`.
 
-### 3. Прийняти dev-сертифікат HTTPS
+### 3. Trust the HTTPS dev certificate
 
-Потрібно тільки якщо це перший .NET-проєкт на цій машині:
+Needed only if this is the first .NET project on this machine:
 
 ```
 dotnet dev-certs https --trust
 ```
 
-### 4. Відновити NuGet-пакети та зібрати рішення (Build)
+### 4. Restore NuGet packages and build the solution (Build)
 
-З кореня репозиторію:
+From the root of the repository:
 
 ```
 dotnet restore PWSV.slnx
 dotnet build PWSV.slnx -c Debug
 ```
 
-Або через Visual Studio:
+Or via Visual Studio:
 
-1. Відкрити файл `PWSV.slnx` у Visual Studio 2026.
-2. Дочекатись відновлення NuGet-пакетів (це може зайняти хвилину-дві).
-3. `Build > Build Solution` (`Ctrl+Shift+B`). Збірка має пройти без помилок та попереджень (проєкт зібраний з `TreatWarningsAsErrors=true`).
+1. Open the `PWSV.slnx` file in Visual Studio 2026.
+2. Wait for the NuGet packages to be restored (this may take a minute or two).
+3. `Build > Build Solution` (`Ctrl+Shift+B`). The build should pass without errors and warnings (the project is built with `TreatWarningsAsErrors=true`).
 
-### 5. Налаштувати секрет JWT
+### 5. Configure the JWT secret
 
-Окремо створювати нічого не треба - при першому запуску `PWSV.Api` секрет згенерується автоматично у файл `src/PWSV.Api/secrets.json` (48 випадкових байт, base64). Цей файл виключений з репозиторію через `.gitignore` і використовується тільки локально.
+There is nothing to create separately - on the first run of `PWSV.Api` the secret will be generated automatically into the file `src/PWSV.Api/secrets.json` (48 random bytes, base64). This file is excluded from the repository via `.gitignore` and is used only locally.
 
-Якщо хочеться задати свій секрет (наприклад, щоб JWT-токени переживали перезапуск, або щоб задати конкретне значення між машинами) - створити вручну файл `src/PWSV.Api/secrets.json`:
+If you want to set your own secret (for example, so that JWT tokens survive a restart, or to set a specific value across machines) - create the file `src/PWSV.Api/secrets.json` manually:
 
 ```json
 {
   "Jwt": {
-    "SecretKey": "тут_довгий_випадковий_рядок_не_менше_32_байтів"
+    "SecretKey": "a_long_random_string_here_at_least_32_bytes"
   }
 }
 ```
 
-Альтернативно - через User Secrets (значення з User Secrets перекриває `secrets.json`):
+Alternatively - via User Secrets (a value from User Secrets overrides `secrets.json`):
 
 ```
 dotnet user-secrets init --project src/PWSV.Api
-dotnet user-secrets set "Jwt:SecretKey" "тут_довгий_випадковий_рядок_не_менше_32_байтів" --project src/PWSV.Api
+dotnet user-secrets set "Jwt:SecretKey" "a_long_random_string_here_at_least_32_bytes" --project src/PWSV.Api
 ```
 
-### 6. База даних
+### 6. Database
 
-Окремо запускати міграції не обов'язково - при першому запуску `PWSV.Api` буде виконано:
+Running the migrations separately is not mandatory - on the first run of `PWSV.Api` the following will be performed:
 
-- створення файлів БД у каталозі `%LOCALAPPDATA%\PWSV\PWSV.mdf` (та `PWSV_log.ldf`),
-- застосування всіх міграцій EF Core (схема, чек-констрейнти, індекси, тригери на `Transactions` та `Accounts`),
-- наповнення довідників `AccountTypes` та `Currencies` базовими записами.
+- creation of the DB files in the directory `%LOCALAPPDATA%\PWSV\PWSV.mdf` (and `PWSV_log.ldf`),
+- application of all EF Core migrations (schema, check constraints, indexes, triggers on `Transactions` and `Accounts`),
+- population of the `AccountTypes` and `Currencies` directories with base records.
 
-Якщо все ж потрібно прогнати міграції до запуску (наприклад, з командного рядка), спочатку поставити EF Core CLI як глобальний інструмент (якщо ще не стояв), потім виконати оновлення:
+If you still need to run the migrations before launching (for example, from the command line), first install the EF Core CLI as a global tool (if it was not installed yet), then perform the update:
 
 ```
 dotnet tool install --global dotnet-ef
 dotnet ef database update --project src/PWSV.Infrastructure --startup-project src/PWSV.Api
 ```
 
-Або з `Package Manager Console` у Visual Studio (`Tools > NuGet Package Manager > Package Manager Console`):
+Or from the `Package Manager Console` in Visual Studio (`Tools > NuGet Package Manager > Package Manager Console`):
 
 ```
 Update-Database -Project PWSV.Infrastructure -StartupProject PWSV.Api
 ```
 
-Перевірити, що тригери дійсно створились - через `View > SQL Server Object Explorer` у Visual Studio, підключитись до `(localdb)\MSSQLLocalDB`, відкрити базу `PWSV`. У таблиці `dbo.Transactions` мають бути тригери:
+To verify that the triggers were actually created - via `View > SQL Server Object Explorer` in Visual Studio, connect to `(localdb)\MSSQLLocalDB`, open the `PWSV` database. The `dbo.Transactions` table should contain the triggers:
 
 - `trg_Transactions_AfterInsert`
 - `trg_Transactions_AfterUpdate`
 - `trg_Transactions_AfterDelete`
 
-А в таблиці `dbo.Accounts`:
+And in the `dbo.Accounts` table:
 
 - `trg_Accounts_PreventDeleteWhenHasTransactions`
 
-Якщо потрібно скинути базу повністю: закрити Visual Studio, виконати:
+If you need to reset the database completely: close Visual Studio, run:
 
 ```
 sqllocaldb stop "MSSQLLocalDB"
 ```
 
-видалити каталог `%LOCALAPPDATA%\PWSV` повністю, після чого знову запустити API - база створиться з нуля.
+delete the `%LOCALAPPDATA%\PWSV` directory completely, after which start the API again - the database will be created from scratch.
 
-### 7. Запустити API та клієнт
+### 7. Run the API and the client
 
-У Visual Studio:
+In Visual Studio:
 
-1. ПКМ на рішенні `PWSV` → `Configure Startup Projects`.
-2. Обрати `Multiple startup projects`.
-3. Поставити Action = `Start` для `PWSV.Api` та `PWSV.Client`.
-4. OK, потім `F5`.
+1. Right-click the `PWSV` solution → `Configure Startup Projects`.
+2. Select `Multiple startup projects`.
+3. Set Action = `Start` for `PWSV.Api` and `PWSV.Client`.
+4. OK, then `F5`.
 
-Або з командного рядка у двох окремих терміналах (важливо: для API явно вказати профіль `https`, бо профіль `http` за замовчуванням слухає тільки порт 5000, а клієнт ходить на `https://localhost:5001`):
+Or from the command line in two separate terminals (important: for the API, explicitly specify the `https` profile, because the `http` profile by default listens only on port 5000, while the client accesses `https://localhost:5001`):
 
 ```
 dotnet run --project src/PWSV.Api --launch-profile https
 dotnet run --project src/PWSV.Client
 ```
 
-Спочатку запуститься API на `https://localhost:5001` (Swagger - на `https://localhost:5001/swagger`), потім відкриється вікно WPF-клієнта.
+First the API will start on `https://localhost:5001` (Swagger - at `https://localhost:5001/swagger`), then the WPF client window will open.
 
-### 8. Реєстрація першого користувача
+### 8. Registering the first user
 
-У вікні клієнта зареєструвати користувача (логін + пароль + мастер-пароль). Вимоги:
+In the client window, register a user (username + password + master password). Requirements:
 
-- Логін: 3-64 символи.
-- Пароль: 8-128 символів, обов'язково мала літера, велика літера, цифра.
-- Мастер-пароль: не коротше 8 символів. Використовується для виведення AES-ключа і запитується при кожному вході - якщо втратити, зашифровані поля (номери рахунків, описи) розшифрувати буде неможливо.
+- Username: 3-64 characters.
+- Password: 8-128 characters, must contain a lowercase letter, an uppercase letter, a digit.
+- Master password: at least 8 characters. It is used to derive the AES key and is requested on every login - if lost, the encrypted fields (account numbers, descriptions) will be impossible to decrypt.
 
-Після реєстрації автоматично відбудеться вхід, і відкриється головне вікно. Реєстрація доступна тільки один раз - система розрахована на одного користувача на інсталяцію.
+After registration, login will happen automatically, and the main window will open. Registration is available only once - the system is designed for one user per installation.
